@@ -1,0 +1,10 @@
+{% extends "classy_admin/base_detail.html" %}
+{% block content_body %}
+  <div class="card">
+    <div class="card-body">
+      {% block detail_body %}
+        {% include "classy_admin/_detail_fields.html" %}
+      {% endblock detail_body %}
+    </div>
+  </div>
+{% endblock content_body %}

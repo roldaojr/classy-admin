@@ -1,0 +1,26 @@
+{% extends "classy_admin/editing/base.html" %}
+{% load crispy_forms_tags i18n %}
+{% block content %}
+  <div class="app-content">
+    <form method="post"
+          id="change-form"
+          {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}
+          novalidate>
+      {% block form_content %}
+        <div class="card">
+          <div class="card-body">{% crispy form %}</div>
+          <div class="card-footer text-end">{% include "classy_admin/editing/_form_buttons.html" %}</div>
+        </div>
+      {% endblock form_content %}
+    </form>
+  </div>
+  {% if object and view.actions.delete %}{# include "cbvadmin/adminlte3/delete_modal.html" #}{% endif %}
+{% endblock content %}
+{% block extrahead %}
+  {{ block.super }}
+  {{ form.media.css }}
+{% endblock extrahead %}
+{% block extrascript %}
+  {{ block.super }}
+  {{ form.media.js }}
+{% endblock extrascript %}

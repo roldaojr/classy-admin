@@ -1,0 +1,24 @@
+{% load static %}
+<aside class="app-sidebar sidebar-dark-primary bg-black sidebar-no-expand "
+       data-bs-theme="dark">
+  <div class="sidebar-brand border-0 d-flex align-items-center justify-content-between">
+    <a href="#" class="brand-link logo-switch">
+      <img src="{% static 'imgs/logos/telabrasil-mini.png' %}"
+           alt="Logo Tela Brasil"
+           class="brand-image-xl logo-xs">
+      <img src="{% static 'imgs/logos/telabrasil.png' %}"
+           alt="Logo Tela Brasil"
+           class="brand-image-xs logo-xl">
+    </a>
+  </div>
+  <button class="border-0 sidebar-icon text-white bg-black"
+          data-lte-toggle="sidebar"
+          href="#"
+          role="button">
+    <i class="bi bi-chevron-left fs-5"></i>
+  </button>
+  <div class="sidebar-wrapper sidebar-menu os-viewport-native-scrollbars-invisible">
+    {% include "classy_admin/includes/sidebar_search.html" %}
+    {% include "classy_admin/includes/sidebar_menu.html" %}
+  </div>
+</aside>

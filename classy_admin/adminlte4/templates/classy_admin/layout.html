@@ -1,0 +1,32 @@
+{% extends "classy_admin/base.html" %}
+{% load static %}
+{% block layout %}
+  <div class="app-wrapper">
+    {% include "classy_admin/includes/header.html" %}
+    {% include "classy_admin/includes/sidebar.html" %}
+    <main class="app-main">
+      <div class="app-content-header">
+        <div class="container-fluid">
+          {% block content_header %}
+            <div class="row">
+              <div class="col-sm-6">
+                <h3 class="mb-0">{{ page_title }}</h3>
+              </div>
+              <div class="col-sm-6">{% include "classy_admin/includes/breadcrumbs.html" %}</div>
+            </div>
+          {% endblock content_header %}
+        </div>
+      </div>
+      <div class="container-fluid">
+        {% block content %}
+          <div class="card card-primary card-outline mb-4">
+            <div class="card-body">
+              {% block content_body %}
+              {% endblock content_body %}
+            </div>
+          </div>
+        {% endblock content %}
+      </div>
+    </main>
+  </div>
+{% endblock layout %}

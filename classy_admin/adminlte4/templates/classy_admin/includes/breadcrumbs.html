@@ -1,0 +1,23 @@
+{% load i18n %}
+<!--begin::Breadcrumb-->
+<ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 mt-0 pb-4 mb-4">
+  <!--begin::Item-->
+  <li class="breadcrumb-item text-muted">
+    <a href="#" class="text-muted text-hover-primary">
+      <i class="fas fa-home"></i>
+    </a>
+  </li>
+  <!--end::Item-->
+  {% for breadcrumb in breadcrumbs %}
+    <!--begin::Item-->
+    <li class="breadcrumb-item text-muted">
+      {% if breadcrumb.url %}
+        <a href="{{ breadcrumb.url }}" class="text-muted">{{ breadcrumb }}</a>
+      {% else %}
+        {{ breadcrumb }}
+      {% endif %}
+    </li>
+    <!--end::Item-->
+  {% endfor %}
+</ul>
+<!--end::Breadcrumb-->

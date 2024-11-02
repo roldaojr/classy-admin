@@ -1,0 +1,45 @@
+{% extends 'cbvadmin/adminlte3/base_site.html' %}
+{% load crispy_forms_tags i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ form.media.css }}
+{% endblock %}
+
+{% block title %}{% if object.pk %}{% trans 'Change' %}{% else %}{% trans 'Add' %}{% endif %} {{ view.admin.model_opts.verbose_name|capfirst }}{% endblock %}
+
+{% block content_body %}
+<section class="content">
+  <div class="container-fluid">
+    <form method="post" id="change-form" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>
+      {% block form_content %}
+      <div class="card card-{{ appearance.navbar_color }} card-outline">
+        <div class="card-body">
+          {% crispy form 'bootstrap4' %}
+        </div>
+        <div class="card-footer">
+          <div class="float-right">
+            <button type="submit" class="btn btn-success">
+              <i class="fa fa-save"></i> {% trans 'Save' %}
+            </button>
+          </div>
+          {% if object and admin.urls.delete %}
+          <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm-delete-modal">
+            <i class="fa fa-trash"></i> {% trans 'Delete' %}
+          </button>
+          {% endif %}
+        </div>
+      </div>
+      {% endblock %}
+    </form>
+  </div>
+</section>
+{% if object and admin.urls.delete %}
+{% include 'cbvadmin/adminlte3/delete_modal.html' %}
+{% endif %}
+{% endblock %}
+
+{% block extrascript %}
+{{ block.super }}
+{{ form.media.js }}
+{% endblock %}

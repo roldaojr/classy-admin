@@ -1,0 +1,61 @@
+{% for item in menu %}
+{% if item.visible %}
+{% if item.header and item.children %}
+<li class="nav-header">
+  {% if item.icon %}<i class="nav-icon {{ item.icon }}"></i>{% endif %}
+  {{ item.title }}
+</li>
+{% for subitem in item.children %}
+<li class="nav-item">
+  <a {% if subitem.url %}href="{{ subitem.url }}"{% endif %} class="nav-link{% if subitem.selected %} active{% endif %}">
+    {% if subitem.icon %}
+    <i class="nav-icon {{ subitem.icon }}"></i>
+    {% else %}
+    <i class="far fa-circle nav-icon"></i>
+    {% endif %}
+    <p>{{ subitem.title }}</p>
+  </a>
+</li>
+{% endfor %}
+{% elif item.children %}
+<li class="nav-item{{ item.selected|yesno:' menu-open,' }}">
+  <a href="#" class="nav-link{{ item.selected|yesno:' active,' }}">
+    {% if item.icon %}
+    <i class="nav-icon {{ item.icon }}"></i>
+    {% else %}
+    <i class="fas fa-circle nav-icon"></i>
+    {% endif %}
+    <p>
+      {{ item.title }}
+      <i class="right fas fa-angle-left"></i>
+    </p>
+  </a>
+  <ul class="nav nav-treeview">
+    {% for subitem in item.children %}
+    <li class="nav-item">
+      <a {% if subitem.url %}href="{{ subitem.url }}"{% endif %} class="nav-link{% if subitem.selected %} active{% endif %}">
+        {% if subitem.icon %}
+        <i class="nav-icon {{ subitem.icon }}"></i>
+        {% else %}
+        <i class="far fa-circle nav-icon"></i>
+        {% endif %}
+        <p>{{ subitem.title }}</p>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</li>
+{% elif item.url %}
+<li class="nav-item">
+  <a {% if item.url %}href="{{ item.url }}"{% endif %} class="nav-link{% if item.url != '/' and item.selected %} active{% endif %}">
+    {% if item.icon %}
+    <i class="nav-icon {{ item.icon }}"></i>
+    {% else %}
+    <i class="far fa-circle nav-icon"></i>
+    {% endif %}
+    <p>{{ item.title }}</p>
+  </a>
+</li>
+{% endif %}
+{% endif %}
+{% endfor %}

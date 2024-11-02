@@ -1,0 +1,119 @@
+{% load static django_htmx %}
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <title>
+      {% block title %}
+        {{ page_title }}
+      {% endblock title %}
+    </title>
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="" />
+    <link rel="canonical" href="" />
+    <link rel="apple-touch-icon"
+          sizes="180x180"
+          href="{% static 'favicon/apple-touch-icon.png' %}">
+    <link rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="{% static 'favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+    {% block headcss %}
+      <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/4.0.0-beta2/css/adminlte.min.css"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer" />
+      <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.min.css"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.13.0/css/OverlayScrollbars.css"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+            rel="stylesheet"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+            rel="stylesheet"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.3/skins/line/blue.css"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer" />
+      <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link href="{% static 'vendor/toastr/toastr.css' %}"
+            rel="stylesheet"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer">
+      <link rel="stylesheet"
+            href="{% static 'vendor/select2/select2-bootstrap-5-theme.css' %}">
+    {% endblock headcss %}
+    {% block extrahead %}
+    {% endblock extrahead %}
+  </head>
+  <body class="{% block body_classes %}layout-fixed sidebar-expand-lg sidebar-mini sidebar-open{% endblock body_classes %}">
+    {% block layout %}
+    {% endblock layout %}
+    {% block extrabody %}
+    {% endblock extrabody %}
+    {% include "classy_admin/includes/modal/base.html" %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="{% static 'vendor/toastr/toastr.min.js' %}"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.3/icheck.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/2.0.1/htmx.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.14.1/cdn.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.9/jquery.inputmask.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/4.0.0-beta2/js/adminlte.min.js"
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/django-select2.js' %}"></script>
+    <script src="{% static 'js/jquery-formset.js' %}"></script>
+    {% django_htmx_script %}
+    {% include "classy_admin/includes/modal/script.html" %}
+    {% block messages %}
+      {% if messages %}{% endif %}
+    {% endblock messages %}
+    {% block extrascript %}
+    {% endblock extrascript %}
+  </body>
+</html>

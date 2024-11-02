@@ -1,0 +1,20 @@
+<li class="nav-item dropdown user-menu">
+  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+    <img src="{{ request.user|placeholder_user_photo }}"
+         class="user-image img-circle elevation-2"
+         alt="Foto">
+    <span class="d-none d-md-inline">{{ request.user }}</span>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    {% if cbvadmin.enable_global_preferences %}
+      <a href="{% url 'cbvadmin:preferences:global' %}" class="dropdown-item">{% trans 'Global Preferences' %}</a>
+    {% endif %}
+    {% if cbvadmin.enable_user_preferences %}
+      <a href="{% url 'cbvadmin:preferences:user' %}" class="dropdown-item">{% trans 'User Preferences' %}</a>
+    {% endif %}
+    <a href="{% url 'cbvadmin:accounts:password_change' %}"
+       class="dropdown-item">{% trans 'Change password' %}</a>
+    <div class="dropdown-divider"></div>
+    <a href="{% url 'cbvadmin:accounts:logout' %}" class="dropdown-item">{% trans 'Log out' %}</a>
+  </div>
+</li>

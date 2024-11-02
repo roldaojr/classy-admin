@@ -1,0 +1,43 @@
+{% load i18n django_tables2 %}
+<ul class="pagination align-items-center mb-0">
+  <li class="page-item">
+    <span class="px-2 text-black">{% trans "Per page" %}</span>
+  </li>
+  <li class="page-item">
+    <a class="page-link dropdown-toggle"
+       href="#"
+       role="button"
+       data-bs-toggle="dropdown"
+       aria-expanded="false">{{ table.page.paginator.per_page }}</a>
+    <ul class="dropdown-menu">
+      <li>
+        <a class="dropdown-item"
+           href="{% querystring 'per_page'=10 '_renderblock'='table_content' %}"
+           hx-get="{% querystring 'per_page'=10 '_renderblock'='table_content' %}"
+           hx-target="#table-content">10</a>
+      </li>
+      <li>
+        <a class="dropdown-item"
+           href="{% querystring 'per_page'=25 '_renderblock'='table_content' %}"
+           hx-get="{% querystring 'per_page'=25 '_renderblock'='table_content' %}"
+           hx-target="#table-content">25</a>
+      </li>
+      <li>
+        <a class="dropdown-item"
+           href="{% querystring 'per_page'=50 '_renderblock'='table_content' %}"
+           hx-get="{% querystring 'per_page'=50 '_renderblock'='table_content' %}"
+           hx-target="#table-content">50</a>
+      </li>
+    </ul>
+  </li>
+  <li class="page-item ms-2 border-start px-2">
+    {{ table.page.start_index }}
+    to {{ table.page.end_index }},
+    of {{ table.page.paginator.count }}
+    {% if table.page.paginator.count > 1 %}
+      itens
+    {% else %}
+      item
+    {% endif %}
+  </li>
+</ul>

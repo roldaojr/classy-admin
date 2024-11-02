@@ -1,0 +1,17 @@
+Dockerfile
+docker-compose.yml
+docker-compose*.yml
+*.pyc
+.git
+.gitignore
+.github
+.gitlab-ci.yml
+.vscode
+*.log
+.prospector.yaml
+*.sqlite3
+README.md
+media/
+private-media/
+staticfiles/
+.*

@@ -1,0 +1,22 @@
+{% load i18n placeholder_image %}
+<!--begin::User Menu Dropdown-->
+<li class="nav-item dropdown user-menu">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+    <img src="{{ request.user|placeholder_user_photo }}"
+         class="user-image rounded-circle"
+         alt="User Image">
+    <span class="d-none d-md-inline">{{ request.user }}</span>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+    <a href="{# url 'account_change_password' #}" class="dropdown-item">{% trans "Change password" %}</a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item"
+       href="{# url 'account_logout' #}"
+       hx-get="{# url 'account_logout' #}"
+       hx-target="#app-modal"
+       hx-trigger="click"
+       data-bs-toggle="modal"
+       data-bs-target="#app-modal">{% trans "Log out" %}</a>
+  </ul>
+</li>
+<!--end::User Menu Dropdown-->

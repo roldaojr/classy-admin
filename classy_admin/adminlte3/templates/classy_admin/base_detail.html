@@ -1,0 +1,35 @@
+{% extends "classy_admin/base_site.html" %}
+{% load i18n django_tables2 %}
+{% block content %}
+  {% block content_header %}
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-sm-6">
+            <h1 class="text-bold">
+              {% block title %}
+                {{ view.model_meta.verbose_name|capfirst }} details
+              {% endblock title %}
+            </h1>
+          </div>
+          <div class="col-sm-6">
+            {% block breadcrumbs %}
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item">
+                  <i class="fa fa-home"></i>
+                </li>
+                {% for item in view.breadcrumbs %}
+                  <li class="breadcrumb-item{% if forloop.last %} active{% endif %}">{{ item }}</li>
+                {% endfor %}
+              </ol>
+            {% endblock breadcrumbs %}
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endblock content_header %}
+  <section class="content">
+    {% block content_body %}
+    {% endblock content_body %}
+  </section>
+{% endblock content %}

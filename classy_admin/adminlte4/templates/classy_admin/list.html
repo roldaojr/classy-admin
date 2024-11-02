@@ -1,0 +1,17 @@
+{% extends "classy_admin/layout.html" %}
+{% load i18n django_tables2 %}
+{% block content %}
+  <div class="card card-primary card-outline mb-4">
+    <div class="card-body p-0">
+      {% block list %}
+        {% render_table table "classy_admin/list/_table.html" %}
+      {% endblock list %}
+    </div>
+    <div class="card-footer">
+      <div class="row">
+        <div class="col-12 col-sm-4">{% include "classy_admin/list/_pagesize.html" %}</div>
+        <div class="col-12 col-sm-2 ms-sm-auto">{% include "classy_admin/list/_pagination.html" %}</div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
