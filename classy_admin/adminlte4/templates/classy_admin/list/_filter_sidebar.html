@@ -1,0 +1,26 @@
+{% load crispy_forms_tags i18n %}
+<aside class="control-sidebar control-sidebar-light">
+  <div class="p-2 control-sidebar-content bg-white">
+    <form id="filter-form">
+      <div class="d-flex justify-content-between border-bottom mb-3">
+        <div class="pt-1">
+          <b>{% trans "Filter" %}</b>
+        </div>
+        <button type="button"
+                class="btn btn-default btn-sm"
+                data-widget="control-sidebar"
+                data-target="filter-sidebar"
+                data-slide="true"
+                href="#"
+                role="button">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      {% for field in filter.form %}{{ field|as_crispy_field:'bootstrap5' }}{% endfor %}
+      <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">{% trans "Filter" %}</button>
+        <a href="?" class="btn btn-outline-primary">{% trans "Clear" %}</a>
+      </div>
+    </form>
+  </div>
+</aside>

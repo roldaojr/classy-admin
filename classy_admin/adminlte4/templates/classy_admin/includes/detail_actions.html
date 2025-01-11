@@ -1,0 +1,10 @@
+{% for action in actions.values %}
+  {% if not action.hidden %}
+    <a class="btn {{ action.default|yesno:'btn-primary,btn-secondary' }}"
+       href="{% url action.url_name object.pk %}">
+      {% if action.icon and action_icons != False %}<i class="{{ action.icon }}"></i>{% endif %}
+      {% if action_names != False %}{{ action.verbose_name|default:action.name|capfirst }}{% endif %}
+    </a>
+  {% endif %}
+  &nbsp;
+{% endfor %}

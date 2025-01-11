@@ -12,9 +12,9 @@
       {% for p in table.page|table_page_range:table.paginator %}
         <li>
           {% if p != '...' %}
-            <a href="{% querystring table.prefixed_page_field=p '_renderblock'='table_content' %}"
-               hx-get="{% querystring table.prefixed_page_field=p '_renderblock'='table_content' %}"
-               hx-target="#table-content"
+            <a href="{% querystring table.prefixed_page_field=p '_renderblock'=target_block %}"
+               hx-get="{% querystring table.prefixed_page_field=p '_renderblock'=target_block %}"
+               hx-target="#{{ target_element_id }}"
                class="dropdown-item">{{ p }}</a>
           {% endif %}
         </li>
@@ -23,9 +23,9 @@
   </li>
   <li class="page-item ms-2 border-start">
     {% if table.page.has_previous %}
-      <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number '_renderblock'='table_content' %}"
-         hx-get="{% querystring table.prefixed_page_field=table.page.previous_page_number '_renderblock'='table_content' %}"
-         hx-target="#table-content"
+      <a href="{% querystring table.prefixed_page_field=table.page.previous_page_number '_renderblock'=target_block %}"
+         hx-get="{% querystring table.prefixed_page_field=table.page.previous_page_number '_renderblock'=target_block %}"
+         hx-target="#{{ target_element_id }}"
          class="page-link"><i class="fas fa-chevron-left"></i></a>
     {% else %}
       <span class="page-link disabled bg-white"><i class="fas fa-chevron-left text-body-tertiary"></i></span>
@@ -33,9 +33,9 @@
   </li>
   <li class="page-item">
     {% if table.page.has_next %}
-      <a href="{% querystring table.prefixed_page_field=table.page.next_page_number '_renderblock'='table_content' %}"
-         hx-get="{% querystring table.prefixed_page_field=table.page.next_page_number '_renderblock'='table_content' %}"
-         hx-target="#table-content"
+      <a href="{% querystring table.prefixed_page_field=table.page.next_page_number '_renderblock'=target_block %}"
+         hx-get="{% querystring table.prefixed_page_field=table.page.next_page_number '_renderblock'=target_block %}"
+         hx-target="#{{ target_element_id }}"
          class="page-link"><i class="fas fa-chevron-right"></i></a>
     {% else %}
       <span class="page-link disabled bg-white"><i class="fas fa-chevron-right text-body-tertiary"></i></span>

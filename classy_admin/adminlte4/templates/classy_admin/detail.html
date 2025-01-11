@@ -1,4 +1,7 @@
 {% extends "classy_admin/editing/base.html" %}
+{% block actions %}
+  {% include "classy_admin/includes/detail_actions.html" with actions=view.actions.item object=object %}
+{% endblock actions %}
 {% block content %}
   <div class="card">
     <div class="card-body">

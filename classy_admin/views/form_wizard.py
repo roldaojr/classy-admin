@@ -1,6 +1,7 @@
 from formtools.wizard.views import SessionWizardView as BaseSessionWizardView
-from .mixins import AdminMixin
+
+from .mixins import ViewSetMixin
 
 
-class SessionWizardView(AdminMixin, BaseSessionWizardView):
+class SessionWizardView(ViewSetMixin, BaseSessionWizardView):
     pass

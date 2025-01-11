@@ -1,9 +1,0 @@
-{% for action in actions %}
-  {% if not action.hidden %}
-    <a class="btn btn-sm {{ forloop.first|yesno:'btn-primary,btn-secondary' }}"
-       href="{% url action.url %}">
-      {% if action.icon %}<i class="{{ action.icon }}"></i>{% endif %}
-      {{ action.verbose_name|capfirst }}
-    </a>
-  {% endif %}
-{% endfor %}

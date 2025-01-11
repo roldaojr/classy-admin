@@ -5,10 +5,10 @@ from django.views.generic import ListView as DjangoListView
 from django_filters.views import FilterMixin as BaseFilterMixin
 from django_tables2 import SingleTableMixin
 
+from ..viewsets.base import WithActionMixin
 from .aaa import LoginRequiredMixin, PermissionRequiredMixin
 from .list_table import table_factory
 from .mixins import TemplateMixin
-from ..viewsets.base import WithActionMixin
 
 
 class FilterMixin(BaseFilterMixin):
@@ -27,7 +27,7 @@ class FilterMixin(BaseFilterMixin):
         return super().get_context_data(
             **kwargs,
             object_list=self.get_filtered_queryset(),
-            filterset=self.filterset,
+            filter=self.filterset,
         )
 
 
@@ -39,12 +39,12 @@ class FilteredSingleTableMixin(FilterMixin, SingleTableMixin):
         return self.list_display
 
     def get_table_class(self):
-        default_action = self.actions.item_default()
+        default_action = self.actions.item_default
         if not self.table_class:
             return table_factory(
                 self.model,
                 self.get_list_display(),
-                url_name=default_action.url_name,
+                url_name=default_action.url_name if default_action else None,
             )
         return super().get_table_class()
 

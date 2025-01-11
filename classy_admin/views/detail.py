@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from django.db.models.fields import Field
 from django.views.generic import DetailView as DjangoDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django_tables2.utils import Accessor
@@ -16,21 +17,36 @@ class DetailMixin(SingleObjectMixin):
         details = OrderedDict()
         for field_name in fields:
             accessor = Accessor(field_name)
-            field = accessor.get_field(type(obj))
             if accessor is None:
                 continue
-
             f_value = accessor.resolve(obj)
+
+            # check if target is a field
+            field: Field = accessor.get_field(type(obj))
             if field:
-                f_label = field.verbose_name[0].upper() + field.verbose_name[1:]
-                f_type = (field.get_internal_type(),)
+                # target attribute is a field
+                f_label = field.verbose_name.capitalize()
+                f_type = field.get_internal_type()
+                # if has choices get choice label for value
+                if field.choices:
+                    f_value = dict(field.choices).get(f_value)
             else:
-                f_type = "method" if callable(f_value) else "property"
+                # target attribute is not a field
+                if callable(f_value):
+                    f_type = "method"
+                    f_label = getattr(f_value, "short_description", field_name)
+                else:
+                    f_type = "property"
+                    propoerty_obj = getattr(type(obj), field_name, None)
+                    if propoerty_obj:
+                        f_label = getattr(
+                            propoerty_obj, "short_description", field_name
+                        )
 
             if f_type == "property":
                 f_label = obj.get_property_label(accessor)
             elif f_type == "method":
-                f_label = accessor
+                f_label = getattr(f_value, "short_description", field_name)
 
             details[field_name] = dict(
                 name=field_name,
@@ -40,10 +56,13 @@ class DetailMixin(SingleObjectMixin):
             )
         return details
 
+    def get_detail_fields(self):
+        return self.detail_fields
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         obj = self.get_object()
-        context["details"] = self.get_details(obj, self.detail_fields)
+        context["details"] = self.get_details(obj, self.get_detail_fields())
         return context
 
 

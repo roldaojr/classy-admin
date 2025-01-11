@@ -1,21 +1,21 @@
-from typing import Callable
 from collections import OrderedDict
-from django.views.generic import View
+from collections.abc import Callable
+
 from django.db.models.base import ModelBase
 from django.urls import include, path, reverse
 from django.urls.resolvers import URLPattern
-from django.utils.translation import gettext_lazy as _
+from django.views.generic import View
 from simple_menu import MenuItem
 
 from ..registries import viewset_registry
+from .actions import ACTIONS_TEMPLATES, Action
 from .mixins import WithActionMixin
-from .actions import Action, ACTIONS_TEMPLATES
 
 
 class ViewSet:
     _actions: dict[str, Action]
-    model: ModelBase
-    name: str
+    model: ModelBase = None
+    name: str = None
     url_prefix: str = None
 
     def __init__(
@@ -26,13 +26,16 @@ class ViewSet:
         **kwargs,
     ) -> None:
         self._actions = {}
-        self.model = model
-        self.name = name
+
         if model is not None:
+            self.model = model
             self.model_name = self.model._meta.model_name
             self.app_label = self.model._meta.app_label
             if name is None:
-                self.name = f"{self.app_label}-{self.model_name}"
+                name = f"{self.app_label}-{self.model_name}"
+
+        if name is not None:
+            self.name = name
 
         if register:
             viewset_registry.register(self)
@@ -71,7 +74,7 @@ class ViewSet:
                 default (bool): Is the default action
                 hidden (bool): Action will not show in user interface
                 tab (bool): Action will show in tab interface
-                route (str): URl path
+                url_path (str): URL path
                 perm (str): Permission required to execute the action
                 icon (str): Icon to show in the button and menus
                 check (callable): callable to check is visible
@@ -91,33 +94,36 @@ class ViewSet:
                 viewset=self,
             )
         )
-        # replace None values with template action values
-        template: dict = ACTIONS_TEMPLATES.get(name, {})
-        for attr, val in template.items():
-            if kwargs.get(attr, None) is None:
-                kwargs[attr] = val
-        # if has not verbose_name use action name
-        if not kwargs["verbose_name"]:
-            kwargs["verbose_name"] = name
-        # upper case verbose name
-        kwargs["verbose_name"] = kwargs.get("verbose_name", name.capitalize())
+        self._update_action_kwargs(name, kwargs)
 
         def decorator(view_class: type[View]):
             self._actions[name] = Action(
-                **kwargs, name=name, view_class=self._view_with_action(view_class)
+                **kwargs,
+                name=name,
+                view_class=view_with_action(view_class),
             )
             return view_class
 
         return decorator
 
-    def _view_with_action(self, view_class):
-        if WithActionMixin not in view_class.__mro__:
-            view_class = type(
-                f"{view_class.__module__}.{view_class.__name__}Action",
-                (WithActionMixin, view_class),
-                {},
-            )
-        return view_class
+    def _update_action_kwargs(
+        self,
+        name: str,
+        kwargs: dict,
+        actions_templates: dict[str, dict] = ACTIONS_TEMPLATES,
+    ) -> None:
+        # replace None values with action template values
+        default_template = actions_templates.get(None) or {}
+        action_template = actions_templates.get(name, default_template)
+        for template in [action_template, default_template]:
+            for attr, val in template.items():
+                if kwargs.get(attr, None) is None:
+                    kwargs[attr] = val
+        # if has not verbose_name use action name
+        if not kwargs.get("verbose_name"):
+            kwargs["verbose_name"] = name
+        # upper case verbose name
+        kwargs["verbose_name"] = kwargs.get("verbose_name", name).capitalize()
 
     def get_view_kwargs(self, action):
         kwargs = {"viewset": self, "action": action}
@@ -128,7 +134,10 @@ class ViewSet:
     def _urlpatterns(self, namespace: str = None) -> list[URLPattern]:
         self.namespace = namespace
         patterns = []
-        for name, action in self._actions.items():
+        actions: list = sorted(
+            self._actions.items(), key=lambda i: int(i[1].item or False)
+        )
+        for name, action in actions:
             url_path = []
             if action.url_path:
                 url_path.append(action.url_path)
@@ -181,3 +190,13 @@ class ViewSet:
         return OrderedDict(
             sorted(self._actions.items(), key=lambda i: i[1].order or 99)
         )
+
+
+def view_with_action(view_class):
+    if WithActionMixin not in view_class.__mro__:
+        view_class = type(
+            f"{view_class.__module__}.{view_class.__name__}Action",
+            (WithActionMixin, view_class),
+            {},
+        )
+    return view_class

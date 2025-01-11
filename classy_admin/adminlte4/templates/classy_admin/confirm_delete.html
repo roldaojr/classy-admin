@@ -1,0 +1,21 @@
+{% extends "classy_admin/modal/form.html" %}
+{% load i18n %}
+{% block modal_body %}
+  <p>{{ delete_message|safe }}</p>
+{% endblock modal_body %}
+{% block modal_footer %}
+  <div class="modal-footer">
+    <div class="d-flex justify-content-end">
+      {% block form_buttons %}
+        {% if request.htmx %}
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancelar</button>
+        {% else %}
+          <a class="btn btn-outline-danger" href="{{ view.get_success_url }}">Cancelar</a>
+        {% endif %}
+        <button type="submit" class="btn btn-danger ms-2">
+          <i class="fa-solid fa-trash"></i> Excluir
+        </button>
+      {% endblock form_buttons %}
+    </div>
+  </div>
+{% endblock modal_footer %}

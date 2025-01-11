@@ -6,10 +6,15 @@
           id="change-form"
           {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}
           novalidate>
+      {% csrf_token %}
       {% block form_content %}
         <div class="card">
           <div class="card-body">{% crispy form %}</div>
-          <div class="card-footer text-end">{% include "classy_admin/editing/_form_buttons.html" %}</div>
+          <div class="card-footer text-end">
+            {% block form_actions %}
+              {% include "classy_admin/editing/_form_buttons.html" %}
+            {% endblock form_actions %}
+          </div>
         </div>
       {% endblock form_content %}
     </form>

@@ -1,10 +1,10 @@
-from django.db.models.base import ModelBase
 from crispy_forms.helper import FormHelper
 from django.contrib import messages
+from django.db.models.base import ModelBase
 
+from ..views.responses import TemplateBlockResponse
 from ..viewsets.actions import Action
 from ..viewsets.base import ViewSet
-from ..views.responses import TemplateBlockResponse
 from .aaa import LoginRequiredMixin, PermissionRequiredMixin
 
 __all__ = ("LoginRequiredMixin", "PermissionRequiredMixin")
@@ -12,6 +12,14 @@ __all__ = ("LoginRequiredMixin", "PermissionRequiredMixin")
 
 class TemplateMixin:
     response_class = TemplateBlockResponse
+    default_template_block = "content"
+
+    def render_to_response(self, context, **response_kwargs):
+        response: TemplateBlockResponse = super().render_to_response(
+            context, **response_kwargs
+        )
+        response.template_block = self.default_template_block
+        return response
 
     def get_template_names(self):
         templates_names = super().get_template_names()
@@ -19,6 +27,8 @@ class TemplateMixin:
         if suffix:
             if suffix[0] == "_":
                 suffix = suffix[1:]
+            if self.action.modal:
+                templates_names.append(f"classy_admin/modal/{suffix}.html")
             templates_names.append(f"classy_admin/{suffix}.html")
         return templates_names
 
@@ -48,6 +58,7 @@ class FormHelperMixin(SuccessMessageMixin):
     def get_form_helper(self):
         helper = FormHelper()
         helper.form_id = getattr(self, "form_id", None)
+        helper.form_tag = False
         return helper
 
     def get_form(self, form_class=None):
@@ -55,30 +66,39 @@ class FormHelperMixin(SuccessMessageMixin):
         if not hasattr(form, "helper"):
             form.helper = self.get_form_helper()
         if hasattr(form, "layout"):
-            if callable(form.layout):
-                form.helper.layout = form.layout()
-            else:
-                form.helper.layout = form.layout
+            form.helper.layout = form.layout() if callable(form.layout) else form.layout
         return form
 
 
-class AdminMixin(
-    LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, TemplateMixin
+class PageTitleMixin:
+    def get_page_title(self):
+        if self.page_title:
+            return self.page_title
+        if self.model:
+            if self.action.default and not self.action.item:
+                return self.model._meta.verbose_name_plural
+            else:
+                return " ".join(
+                    [
+                        self.action.verbose_name.capitalize(),
+                        str(self.model._meta.verbose_name).capitalize(),
+                    ]
+                )
+        return self.action.verbose_name.capitalize()
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs, page_title=self.get_page_title())
+
+
+class ViewSetMixin(
+    PageTitleMixin,
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    SuccessMessageMixin,
+    TemplateMixin,
 ):
     action: Action
     model: ModelBase
     viewset: ViewSet
-
-    def get_page_title(self):
-        if self.action.default:
-            return self.model._meta.verbose_name_plural
-        else:
-            return " ".join(
-                [
-                    self.action.verbose_name.capitalize(),
-                    str(self.model._meta.verbose_name).capitalize(),
-                ]
-            )
-
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs, page_title=self.get_page_title())
+    page_title = None
+    permission_required = []

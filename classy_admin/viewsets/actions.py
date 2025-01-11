@@ -1,14 +1,11 @@
+from collections.abc import Callable
 from types import SimpleNamespace
-from typing import Callable, Self, TYPE_CHECKING, Type
-from functools import partialmethod, partial
+from typing import TYPE_CHECKING, Self
 
-from django_tables2.columns import TemplateColumn
-from django.views.generic import View
-from django.db.models.options import Options
 from django.core.exceptions import ImproperlyConfigured
+from django.db.models.options import Options
 from django.http import HttpRequest, HttpResponse
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import View
 
 if TYPE_CHECKING:
     from .base import ViewSet
@@ -34,6 +31,7 @@ ACTIONS_TEMPLATES: dict[dict] = {
         default=False,
         verbose_name=_("change"),
         icon="fas fa-pencil",
+        perm="change",
         order=51,
     ),
     "detail": dict(
@@ -41,6 +39,7 @@ ACTIONS_TEMPLATES: dict[dict] = {
         default=True,
         verbose_name=_("detail"),
         icon="fas fa-eye",
+        perm="view",
         order=1,
     ),
     "delete": dict(
@@ -48,7 +47,16 @@ ACTIONS_TEMPLATES: dict[dict] = {
         default=False,
         verbose_name=_("delete"),
         icon="fas fa-trash",
+        perm="delete",
         order=100,
+    ),
+    None: dict(
+        item=False,
+        batch=False,
+        default=False,
+        hidden=False,
+        tab=False,
+        order=99,
     ),
 }
 
@@ -65,14 +73,15 @@ class Action(SimpleNamespace):
     bulk: bool = False
     default: bool = False
     hidden: bool = False
+    modal: bool = False
     url_path: str = None
     perm: str = None
     icon: str = None
     order: int = None
     check: Callable[[Self, HttpRequest], bool]
     url: str
-    view_class: View
-    view: "WithActionMixin" | Callable[[HttpRequest], HttpResponse]
+    view_class: type["WithActionMixin"]
+    view: Callable[[HttpRequest], HttpResponse]
     viewset: "ViewSet"
 
     @property
@@ -85,13 +94,11 @@ class Action(SimpleNamespace):
 
     @property
     def perm_name(self):
-        perm = [self.perm or self.name]
+        perm = self.perm or self.name
         if self.viewset.model:
             meta: Options = self.viewset.model._meta
-            perm + [meta.app_label, meta.model_name]
-        if self.perm:
-            perm.append(self.name)
-        return "_".join(perm)
+            return f"{meta.app_label}.{perm}_{meta.model_name}"
+        return f"{perm}_{self.viewset.name}"
 
     @staticmethod
     def check(action: "Action", request: HttpRequest) -> bool:
@@ -107,40 +114,88 @@ class Action(SimpleNamespace):
 
 
 class ActionsManager:
-    def __init__(self, viewset: "ViewSet", request: HttpRequest) -> None:
-        self.viewset = viewset
-        self.request = request
+    view: "WithActionMixin"
 
-    def all(self) -> dict[str, Action]:
-        return self.viewset.bound_actions
+    def __get__(self, obj, obj_type=None) -> dict[str, Action]:
+        self.view = obj
+        return self
 
-    def _default(self, method: partialmethod) -> Action:
-        get_actions: Callable[[], dict[str, Action]] = method.__get__(self)
-        default_actions = [a for _, a in get_actions().items() if a.default]
-        if len(default_actions) != 1:
-            raise ImproperlyConfigured("Must be only default action available")
-        return default_actions[0]
+    def __set_name__(self, view, name):
+        self.view = view
+        self.__name__ = name
 
-    def allowed(self, **kwargs) -> dict[str, Action]:
+    def __set__(self):
+        raise AttributeError(f"{self.attr_name} attribute can not be changed")
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} of {self.view.viewset.__class__.__name__}({self.view.viewset.name})>"
+
+    def registered(self) -> dict[str, Action]:
+        return self.view.viewset.bound_actions
+
+    def _allowed(self, include_hidden=False, **kwargs) -> dict[str, Action]:
         actions = {}
-        for name, action in self.all().items():
-            for attr, val in kwargs.items():
-                attr_val = getattr(action, attr, None)
-                if attr_val == val and (
-                    action.check is None or action.check(self, self.request)
-                ):
-                    actions[name] = action
+        request = self.view.request
+        for name, action in self.registered().items():
+            if action.hidden and not include_hidden:
+                continue
+            if self.view.action.name == name:
+                continue
+            if not all(
+                [getattr(action, attr, False) == val for attr, val in kwargs.items()]
+            ):
+                continue
+            if action.check is not None and not action.check(action, request):
+                continue
+            actions[name] = action
         return actions
 
-    def __get__(self) -> dict[str, Action]:
-        return self.allowed()
+    def _only_default(self, actions: dict[str, Action]) -> Action:
+        default_actions = [a for _, a in actions.items() if a.default]
+        if not default_actions:
+            return None
+        if len(default_actions) != 1:
+            raise ImproperlyConfigured(
+                f"Must be one default action available. Defined: {default_actions}"
+            )
+        return default_actions[0]
 
-    list = partialmethod(allowed, item=False, bulk=False, tab=False)
-    item = partialmethod(allowed, item=True)
-    bulk = partialmethod(allowed, bulk=True)
-    tab = partialmethod(allowed, tab=True)
-    tab_item = partialmethod(allowed, item=True, tab=True)
-    list_default = partialmethod(_default, list)
-    item_default = partialmethod(_default, item)
-    tab_default = partialmethod(_default, tab)
-    tab_item_default = partialmethod(_default, tab_item)
+    @property
+    def allowed(self) -> dict[str, Action]:
+        return self._allowed(include_hidden=True)
+
+    @property
+    def non_item(self) -> dict[str, Action]:
+        return self._allowed(item=False)
+
+    @property
+    def item(self) -> dict[str, Action]:
+        return self._allowed(item=True)
+
+    @property
+    def bulk(self) -> dict[str, Action]:
+        return self._allowed(bulk=True)
+
+    @property
+    def tab(self) -> dict[str, Action]:
+        return self._allowed(tab=True)
+
+    @property
+    def tab_item(self) -> dict[str, Action]:
+        return self._allowed(item=True, tab=True)
+
+    @property
+    def non_item_default(self) -> Action:
+        return self._only_default(self.non_item)
+
+    @property
+    def item_default(self) -> Action:
+        return self._only_default(self.item)
+
+    @property
+    def tab_default(self) -> Action:
+        return self._only_default(self.tab)
+
+    @property
+    def tab_item_default(self) -> Action:
+        return self._only_default(self.tab_item)

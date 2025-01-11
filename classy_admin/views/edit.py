@@ -1,33 +1,20 @@
-from django.views.generic.edit import (
-    CreateView as DjangoCreateView,
-    DeleteView as DjangoDeleteView,
-    FormView as DjangoFormView,
-    UpdateView as DjangoUpdateView,
-)
+from django.views.generic.edit import CreateView as DjangoCreateView
+from django.views.generic.edit import DeleteView as DjangoDeleteView
+from django.views.generic.edit import FormView as DjangoFormView
+from django.views.generic.edit import UpdateView as DjangoUpdateView
 
-from .aaa import LoginRequiredMixin, PermissionRequiredMixin
-from .mixins import TemplateMixin, AdminMixin, FormHelperMixin
+from .mixins import FormHelperMixin, ViewSetMixin
 
 
-class CreateView(FormHelperMixin, AdminMixin, DjangoCreateView):
+class CreateView(FormHelperMixin, ViewSetMixin, DjangoCreateView):
     success_message = '{name} "{obj}" foi adicionado com êxito.'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = f"Adicionar {self.model._meta.verbose_name}"
-        return context
 
-
-class UpdateView(FormHelperMixin, AdminMixin, DjangoUpdateView):
+class UpdateView(FormHelperMixin, ViewSetMixin, DjangoUpdateView):
     success_message = '{name} "{obj}" foi atualizado com êxito.'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = f"Alterar {self.model._meta.verbose_name}"
-        return context
 
-
-class DeleteView(AdminMixin, DjangoDeleteView):
+class DeleteView(ViewSetMixin, DjangoDeleteView):
     delete_message = (
         "Deseja realmente exluir o {object._meta.verbose_name} <b>{object}</b>?"
     )
@@ -44,5 +31,5 @@ class DeleteView(AdminMixin, DjangoDeleteView):
         return context
 
 
-class FormView(AdminMixin, DjangoFormView):
+class FormView(ViewSetMixin, DjangoFormView):
     template_name_suffix = "_form"

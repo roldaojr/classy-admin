@@ -1,0 +1,15 @@
+{% extends "classy_admin/modal/form.html" %}
+{% load crispy_forms_tags i18n %}
+{% block modal_classes %}
+  modal-sm
+{% endblock modal_classes %}
+{% block modal_body %}
+  {% translate "Are you sure you want to sign out?" %}.
+{% endblock modal_body %}
+{% block modal_footer %}
+  <div class="modal-footer">
+    <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary">{% translate "Log out" %}</button>
+    </div>
+  </div>
+{% endblock modal_footer %}

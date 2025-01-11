@@ -1,0 +1,105 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-05 10:28-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\logged_out.html:8
+msgid "Log in again"
+msgstr ""
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\login.html:13
+#: .\classy_admin\views\accounts.py:17
+msgid "Log in"
+msgstr "Acessar"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\login.html:17
+msgid "Forgot password"
+msgstr "Esqueceu sua senha"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\logout.html:7
+msgid "Are you sure you want to sign out?"
+msgstr "Deseja realmente sair"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\logout.html:12
+#: .\classy_admin\adminlte4\templates\classy_admin\includes\header\user_menu.html:19
+#: .\classy_admin\menus.py:20 .\classy_admin\views\accounts.py:23
+msgid "Log out"
+msgstr "Sair"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\password_change_form.html:4
+#: .\classy_admin\adminlte4\templates\classy_admin\includes\header\user_menu.html:11
+#: .\classy_admin\menus.py:14
+msgid "Change password"
+msgstr "Alterar senha"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\password_reset_form.html:11
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+"Esqueceu sua senha? Digite seu endereço de e-mail abaixo e nós lhe enviaremos"
+"instruções para definir uma nova senha."
+
+#: .\classy_admin\adminlte4\templates\classy_admin\accounts\password_reset_form.html:15
+msgid "Reset my password"
+msgstr "Redefinir minha senha"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\list.html:10
+msgid "filter"
+msgstr "filtro"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_filter_button.html:7
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_filter_sidebar.html:7
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_filter_sidebar.html:21
+msgid "Filter"
+msgstr "filtro"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_filter_sidebar.html:22
+msgid "Clear"
+msgstr "Limpar"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_pagesize.html:4
+msgid "Per page"
+msgstr "Por página"
+
+#: .\classy_admin\adminlte4\templates\classy_admin\list\_pagination.html:4
+msgid "Page"
+msgstr "Página"
+
+#: .\classy_admin\viewsets\actions.py:19
+msgid "list"
+msgstr "listar"
+
+#: .\classy_admin\viewsets\actions.py:25
+msgid "add"
+msgstr "adicionar"
+
+#: .\classy_admin\viewsets\actions.py:32
+msgid "change"
+msgstr "modificar"
+
+#: .\classy_admin\viewsets\actions.py:39
+msgid "detail"
+msgstr "Detalhes"
+
+#: .\classy_admin\viewsets\actions.py:46
+msgid "delete"
+msgstr "Apagar"
+
+#: .\classy_admin\viewsets\mixins.py:37
+msgid "Actions"
+msgstr "Ações"

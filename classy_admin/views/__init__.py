@@ -1,11 +1,8 @@
 from .detail import DetailView
-from .edit import (
-    CreateView,
-    DeleteView,
-    FormView,
-    UpdateView,
-)
+from .edit import CreateView, DeleteView, FormView, UpdateView
 from .list import TableListView
+from .dashboard import DashboardView
+from .accounts import LoginView, LogoutView
 
 __all__ = [
     "CreateView",
@@ -14,4 +11,7 @@ __all__ = [
     "TableListView",
     "UpdateView",
     "FormView",
+    "DashboardView",
+    "LoginView",
+    "LogoutView",
 ]

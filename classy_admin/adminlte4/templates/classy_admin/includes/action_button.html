@@ -1,0 +1,7 @@
+<a title="{{ action.verbose_name|default:action.name|capfirst }}"
+   class="btn btn-{{ color|default:"primary" }} action-{{ name }} {{ css_classes }}"
+   {% if action.modal %} hx-get="{% url action.url_name %}" hx-target="#app-modal" hx-trigger="click" data-bs-toggle="modal" data-bs-target="#app-modal" {% endif %}
+   href="{% url action.url_name %}">
+  {% if action.icon %}<i class="{{ action.icon }}"></i>{% endif %}
+  {{ action.verbose_name|default:action.name|capfirst }}
+</a>

@@ -1,0 +1,12 @@
+{% extends "classy_admin/layout.html" %}
+{% block layout_main %}
+  <div class="app-content">
+    <div class="modal modal-inline" tabindex="-1" id="page-modal">
+      {% block content %}
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content"></div>
+        </div>
+      {% endblock content %}
+    </div>
+  </div>
+{% endblock layout_main %}

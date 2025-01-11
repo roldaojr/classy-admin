@@ -1,5 +1,6 @@
 import typing
-from itertools import groupby
+from collections import defaultdict
+
 from django.apps import apps
 from django.urls import include, path
 from persisting_theory import Registry
@@ -11,7 +12,8 @@ if typing.TYPE_CHECKING:
 
 class ViewSetRegistry(Registry):
     look_into = "views"
-    namespace = "classy-admin"
+    namespace = "classy_admin"
+    default_viewset: "ViewSet"
 
     @property
     def urls(self):
@@ -24,23 +26,55 @@ class ViewSetRegistry(Registry):
             namespace = self.namespace
         viewsets: list[ViewSet] = self.values()
         return (
-            [vs.get_url_path(namespace=namespace) for vs in viewsets],
+            [
+                vs.get_url_path(namespace=namespace)
+                for vs in viewsets
+                if vs != self.default_viewset
+            ]
+            + [
+                path(
+                    "",
+                    include(
+                        self.default_viewset._urlpatterns(namespace=self.namespace)
+                    ),
+                )
+            ],
             "viewsets",
             namespace,
         )
 
     def add_menu_items(self, menu_name: str | None = None):
-        for app_label, viewsets in groupby(
-            self.values(), lambda vs: vs.model._meta.app_label
-        ):
-            app = apps.get_app_config(app_label)
-            item = MenuItem(app.verbose_name, url="#", children=[])
-            for vs in viewsets:
-                vs: ViewSet
-                subitem = vs.get_menu_item(self.namespace)
-                if subitem:
-                    item.children.append(subitem)
-            Menu.add_item(menu_name or self.namespace, item)
+        vs: ViewSet
+        app_menu_items = defaultdict(list)
+        if not menu_name:
+            menu_name = self.namespace
+
+        for vs in self.values():
+            # menu menu items from viewsets
+            if vs.model:
+                app_label = vs.model._meta.app_label
+            subitem = vs.get_menu_item(self.namespace)
+            if subitem:
+                app_menu_items[app_label].append(subitem)
+
+        for app_label, subitems in app_menu_items.items():
+            # add menu items to root menu
+            if len(subitems) == 0:
+                continue
+            if app_label:
+                app = apps.get_app_config(app_label)
+                app_icon = getattr(app, "menu_icon", None)
+                item = MenuItem(
+                    app.verbose_name,
+                    url="#",
+                    icon=app_icon,
+                    children=subitems,
+                )
+                Menu.add_item(menu_name, item)
+            else:
+                # if not app_label, add items to root menu
+                for item in subitems:
+                    Menu.add_item(menu_name, item)
 
     def autodiscover(self, force_reload=False):
         app_names = [
@@ -56,4 +90,16 @@ class ViewSetRegistry(Registry):
         return super().get_object_name(data)
 
 
+class DashboardWidgetRegistry(Registry):
+    look_into = "dashboard_widgets"
+
+    def prepare_name(self, data, name=None):
+        if name is None:
+            name = self.get_object_name(data)
+            module = getattr(data, "__module__", None)
+            return f"{module}.{name}" if module is not None else "{name}"
+        return name
+
+
 viewset_registry = ViewSetRegistry()
+dashboard_registry = DashboardWidgetRegistry()

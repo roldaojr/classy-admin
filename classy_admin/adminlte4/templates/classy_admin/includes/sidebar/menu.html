@@ -1,0 +1,34 @@
+{% load simple_menu %}
+<nav class="nav-collapse-hide-child">
+  <ul class="nav nav-pills nav-sidebar flex-column nav-collapse-hide-child"
+      data-lte-toggle="treeview"
+      role="menu"
+      data-accordion="false">
+    {% for item in menu %}
+      <li class="nav-item">
+        {% if item.children %}
+          <a href="#" class="nav-link{{ item.active|yesno:' active,' }}">
+            {% if item.icon %}<i class="nav-icon {{ item.icon }} fs-5"></i>{% endif %}
+            <p>{{ item.title }}</p>
+            <i class="nav-arrow fa fa-solid fa-caret-right fs-9"></i>
+          </a>
+          <ul class="nav nav-treeview">
+            {% for subitem in item.children %}
+              <li class="nav-item">
+                <a href="{{ subitem.url }}" class="nav-link">
+                  <p>{{ subitem.title }}</p>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <a href="{{ item.url }}"
+             class="nav-link{{ item.active|yesno:' active,' }}">
+            {% if item.icon %}<i class="nav-icon {{ item.icon }} fs-5"></i>{% endif %}
+            <p>{{ item.title }}</p>
+          </a>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

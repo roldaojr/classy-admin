@@ -2,16 +2,36 @@
 {% load i18n django_tables2 %}
 {% block content %}
   <div class="card card-primary card-outline mb-4">
-    <div class="card-body p-0">
-      {% block list %}
-        {% render_table table "classy_admin/list/_table.html" %}
-      {% endblock list %}
+    <div class="card-header">
+      <a class="btn btn-secondary"
+         data-widget="control-sidebar"
+         data-controlsidebar-slide="true"
+         href="#"
+         role="button">{% trans "filter" %}</a>
+      {% include "classy_admin/list/_actions.html" with actions=view.actions.non_item %}
     </div>
-    <div class="card-footer">
-      <div class="row">
-        <div class="col-12 col-sm-4">{% include "classy_admin/list/_pagesize.html" %}</div>
-        <div class="col-12 col-sm-2 ms-sm-auto">{% include "classy_admin/list/_pagination.html" %}</div>
-      </div>
+    {% block listing-content %}
+      <div id="listing-content">
+        <div class="card-body p-0">
+          {% block list %}
+            {% render_table table "classy_admin/list/_table.html" %}
+          {% endblock list %}
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-12 col-sm-4">
+              {% include "classy_admin/list/_pagesize.html" with target_block="listing-content" target_element_id="listing-content" %}
+            </div>
+            <div class="col-12 col-sm-2 ms-sm-auto">
+              {% include "classy_admin/list/_pagination.html" with target_block="listing-content" target_element_id="listing-content" %}
+            </div>
+          </div>
+        </div>
+      {% endblock listing-content %}
     </div>
   </div>
 {% endblock content %}
+{% block afterlayout %}
+  {{ block.super }}
+  {% include "classy_admin/list/_filter_sidebar.html" %}
+{% endblock afterlayout %}
