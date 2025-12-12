@@ -1,4 +1,4 @@
-{% extends "classy_admin/base.html" %}
+{% extends "base.html" %}
 {% load static %}
 {% block body_classes %}
   layout-fixed sidebar-expand-lg sidebar-mini sidebar-open
@@ -6,10 +6,10 @@
 {% block layout %}
   <div class="app-wrapper">
     {% block header %}
-      {% include "classy_admin/includes/header.html" %}
+      {% include "includes/header.html" %}
     {% endblock header %}
     {% block sidebar %}
-      {% include "classy_admin/includes/sidebar.html" %}
+      {% include "includes/sidebar.html" %}
     {% endblock sidebar %}
     <main class="app-main">
       {% block layout_main %}
@@ -20,7 +20,7 @@
                 <div class="col-sm-6">
                   <h3 class="mb-0">{{ page_title|capfirst }}</h3>
                 </div>
-                <div class="col-sm-6">{% include "classy_admin/includes/breadcrumbs.html" %}</div>
+                <div class="col-sm-6">{% include "includes/breadcrumbs.html" %}</div>
               </div>
             {% endblock content_header %}
           </div>

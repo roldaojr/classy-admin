@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+
 from classy_admin.registries import viewset_registry
 
 viewset_registry.autodiscover()

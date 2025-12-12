@@ -16,11 +16,25 @@ class Select2Mixin:
         return super().build_attrs(base_attrs, extra_attrs)
 
 
-class ModelSelect2Widget(Select2Mixin, DjangoModelSelect2Widget):
+class ModelSelect2WithExcludesMinin:
+    def filter_queryset(self, request, term, queryset=None, **kwargs):
+        queryset = super().filter_queryset(request, term, queryset, **kwargs)
+        # Pega IDs já selecionados passados pela URL
+        excludes = request.GET.getlist("excludes[]", [])
+        if excludes:
+            queryset = queryset.exclude(id__in=excludes)
+        return queryset
+
+
+class ModelSelect2Widget(
+    Select2Mixin, ModelSelect2WithExcludesMinin, DjangoModelSelect2Widget
+):
     pass
 
 
-class ModelSelect2MultipleWidget(Select2Mixin, DjangoModelSelect2MultipleWidget):
+class ModelSelect2MultipleWidget(
+    Select2Mixin, ModelSelect2WithExcludesMinin, DjangoModelSelect2MultipleWidget
+):
     pass
 
 

@@ -1,12 +1,13 @@
-from classy_admin.viewsets import ViewSet
+from django.contrib.auth.models import Group, User
+
 from classy_admin.views import (
-    TableListView,
     CreateView,
-    UpdateView,
     DeleteView,
     DetailView,
+    TableListView,
+    UpdateView,
 )
-from django.contrib.auth.models import User, Group
+from classy_admin.viewsets import ViewSet
 
 user_vs = ViewSet(User)
 group_vs = ViewSet(Group)

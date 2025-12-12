@@ -28,8 +28,8 @@ class TemplateMixin:
             if suffix[0] == "_":
                 suffix = suffix[1:]
             if self.action.modal:
-                templates_names.append(f"classy_admin/modal/{suffix}.html")
-            templates_names.append(f"classy_admin/{suffix}.html")
+                templates_names.append(f"modal/{suffix}.html")
+            templates_names.append(f"{suffix}.html")
         return templates_names
 
 
@@ -38,9 +38,8 @@ class SuccessMessageMixin:
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        success_message = self.get_success_message(
-            form.cleaned_data, getattr(form, "instance", None)
-        )
+        instance = getattr(form, "instance", None) or getattr(self, "object", None)
+        success_message = self.get_success_message(form.cleaned_data, instance)
         if success_message:
             messages.success(self.request, success_message)
         return response
@@ -101,4 +100,3 @@ class ViewSetMixin(
     model: ModelBase
     viewset: ViewSet
     page_title = None
-    permission_required = []

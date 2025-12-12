@@ -39,8 +39,8 @@ class FilteredSingleTableMixin(FilterMixin, SingleTableMixin):
         return self.list_display
 
     def get_table_class(self):
-        default_action = self.actions.item_default
         if not self.table_class:
+            default_action = self.actions.item_default
             return table_factory(
                 self.model,
                 self.get_list_display(),
@@ -125,10 +125,11 @@ class ListView(
     DjangoListView,
 ):
     template_name_suffix = "_list"
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(
-            page_title=self.model._meta.verbose_name_plural.capitalize(), **kwargs
+            **kwargs, page_title=self.model._meta.verbose_name_plural.capitalize()
         )
 
 
@@ -142,6 +143,7 @@ class TableListView(
     DjangoListView,
 ):
     template_name_suffix = "_list"
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         return super().get_context_data(

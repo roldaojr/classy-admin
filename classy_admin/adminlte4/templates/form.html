@@ -1,4 +1,4 @@
-{% extends "classy_admin/editing/base.html" %}
+{% extends "editing/base.html" %}
 {% load crispy_forms_tags i18n %}
 {% block content %}
   <div class="app-content">
@@ -12,7 +12,7 @@
           <div class="card-body">{% crispy form %}</div>
           <div class="card-footer text-end">
             {% block form_actions %}
-              {% include "classy_admin/editing/_form_buttons.html" %}
+              {% include "editing/_form_buttons.html" %}
             {% endblock form_actions %}
           </div>
         </div>

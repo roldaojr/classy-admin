@@ -2,6 +2,7 @@ import typing
 from collections import defaultdict
 
 from django.apps import apps
+from django.conf import settings
 from django.urls import include, path
 from persisting_theory import Registry
 from simple_menu import Menu, MenuItem
@@ -48,11 +49,11 @@ class ViewSetRegistry(Registry):
         app_menu_items = defaultdict(list)
         if not menu_name:
             menu_name = self.namespace
+        menu_groups = getattr(settings, "MENU_APP_GROUPS", True)
 
         for vs in self.values():
-            # menu menu items from viewsets
-            if vs.model:
-                app_label = vs.model._meta.app_label
+            # add menu items from viewsets
+            app_label = vs.model._meta.app_label if vs.model and menu_groups else None
             subitem = vs.get_menu_item(self.namespace)
             if subitem:
                 app_menu_items[app_label].append(subitem)
@@ -94,10 +95,14 @@ class DashboardWidgetRegistry(Registry):
     look_into = "dashboard_widgets"
 
     def prepare_name(self, data, name=None):
-        if name is None:
-            name = self.get_object_name(data)
-            module = getattr(data, "__module__", None)
-            return f"{module}.{name}" if module is not None else "{name}"
+        if name is not None:
+            return name
+        if hasattr(data, "name"):
+            name = data.name
+        name = self.get_object_name(data)
+        module = getattr(data, "__module__", None)
+        if module is not None:
+            return f"{module}.{name}"
         return name
 
 

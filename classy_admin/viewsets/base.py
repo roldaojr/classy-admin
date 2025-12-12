@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from collections.abc import Callable
 
+from django.conf import settings
 from django.db.models.base import ModelBase
 from django.urls import include, path, reverse
 from django.urls.resolvers import URLPattern
@@ -17,6 +18,8 @@ class ViewSet:
     model: ModelBase = None
     name: str = None
     url_prefix: str = None
+    display_action_icons: bool = getattr(settings, "CLASSY_ADMIN_ACTION_ICONS", True)
+    display_action_labels: bool = getattr(settings, "CLASSY_ADMIN_ACTION_LABELS", True)
 
     def __init__(
         self,
@@ -66,18 +69,20 @@ class ViewSet:
         """Add action to viewset
 
         Arguments:
-                name (str): Name of the action
+                name (str): Unique identifier for the action.
         Keyword arguments:
-                verbose_name (str): Name to show in pages
-                item (bool): action on the model instance
-                batch (bool): action on a set of model instances
-                default (bool): Is the default action
-                hidden (bool): Action will not show in user interface
-                tab (bool): Action will show in tab interface
-                url_path (str): URL path
-                perm (str): Permission required to execute the action
-                icon (str): Icon to show in the button and menus
-                check (callable): callable to check is visible
+                verbose_name (str, optional): Human-readable name for the action.
+                item (bool): Whether the action applies to individual items.
+                batch (bool): Whether the action can be applied to multiple items.
+                default (bool): Indicates if this is the default action.
+                hidden (bool): Determines if the action should be hidden from user interface.
+                tab (bool): Determines if the action displayed in tab interface.
+                modal (bool): Whether the action should be displayed in a modal.
+                url_path (str, optional): Custom URL path for the action.
+                perm (str, optional): Permission required to perform the action.
+                icon (str, optional): Icon identifier for the action.
+                order (int, optional): Sorting order for the action.
+                check (Callable): Function to determine if the action is visible.
         """
         kwargs.update(
             dict(
@@ -145,7 +150,7 @@ class ViewSet:
                 if action.item:
                     url_path.append("<str:pk>")
                 if not action.default:
-                    url_path.append(name)
+                    url_path.append(name + "/")
 
             view_kwargs = self.get_view_kwargs(action)
 
@@ -163,20 +168,23 @@ class ViewSet:
         default_actions = [
             a for _, a in self._actions.items() if a.default and not a.item
         ]
-        default_action = default_actions[0]
-        default_url = reverse(default_action.url_name)
-        if default_url:
-            title = (
-                self.model._meta.verbose_name_plural.title()
-                if self.model
-                else self.name
-            )
-            return MenuItem(
-                title,
-                url=default_url,
-                icon=default_action.icon,
-                weight=default_action.order or 10,
-            )
+        if len(default_actions) > 0:
+            default_action = default_actions[0]
+            if default_action.url_name:
+                default_url = reverse(default_action.url_name)
+                title = (
+                    self.model._meta.verbose_name_plural.title()
+                    if self.model
+                    else default_action.verbose_name or default_action.name.capitalize()
+                )
+                check_func = default_action.check or Action.check
+                return MenuItem(
+                    title,
+                    url=default_url,
+                    icon=default_action.icon,
+                    weight=default_action.order or 10,
+                    check=lambda r: check_func(default_action, r),
+                )
 
     def get_url_path(self, namespace=None):
         if self.model:
@@ -192,11 +200,13 @@ class ViewSet:
         )
 
 
-def view_with_action(view_class):
+def view_with_action(view_class: type[View]) -> type[WithActionMixin]:
+    """Decorator to add WithActionMixin to view class"""
     if WithActionMixin not in view_class.__mro__:
         view_class = type(
             f"{view_class.__module__}.{view_class.__name__}Action",
             (WithActionMixin, view_class),
             {},
         )
+        setattr(view_class, "__module__", view_class.__module__)
     return view_class

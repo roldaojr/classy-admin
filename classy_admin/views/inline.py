@@ -1,21 +1,17 @@
-from extra_views.advanced import (
-    BaseCreateWithInlinesView,
-    BaseUpdateWithInlinesView,
-    NamedFormsetsMixin,
-)
+from extra_views.advanced import CreateWithInlinesView as BaseCreateWithInlinesView
+from extra_views.advanced import NamedFormsetsMixin
+from extra_views.advanced import UpdateWithInlinesView as BaseUpdateWithInlinesView
 
-from .edit import ViewSetMixin
+from .mixins import FormHelperMixin, ViewSetMixin
 
 
 class CreateWithInlinesView(
-    ViewSetMixin, NamedFormsetsMixin, BaseCreateWithInlinesView
+    ViewSetMixin, NamedFormsetsMixin, FormHelperMixin, BaseCreateWithInlinesView
 ):
-    template_name_suffix = "_form"
     success_message = '{name} "{obj}" foi adicionado com êxito.'
 
 
 class UpdateWithInlinesView(
-    ViewSetMixin, NamedFormsetsMixin, BaseUpdateWithInlinesView
+    ViewSetMixin, NamedFormsetsMixin, FormHelperMixin, BaseUpdateWithInlinesView
 ):
-    template_name_suffix = "_form"
     success_message = '{name} "{obj}" foi atualizado com êxito.'

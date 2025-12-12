@@ -1,9 +1,9 @@
 {% load static simple_menu %}
 <aside class="app-sidebar sidebar-dark-primary bg-black sidebar-no-expand "
        data-bs-theme="dark">
-  {% include "classy_admin/includes/sidebar/brand.html" %}
+  {% include "includes/sidebar/brand.html" %}
   <div class="sidebar-wrapper sidebar-menu os-viewport-native-scrollbars-invisible">
     {% generate_menu %}
-    {% include "classy_admin/includes/sidebar/menu.html" with menu=menus.classy_admin %}
+    {% include "includes/sidebar/menu.html" with menu=menus.classy_admin %}
   </div>
 </aside>

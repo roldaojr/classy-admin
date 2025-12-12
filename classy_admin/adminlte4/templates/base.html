@@ -12,7 +12,7 @@
     <meta name="keywords" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block favicon %}
-      {% include "classy_admin/includes/favicon.html" %}
+      {% include "includes/favicon.html" %}
     {% endblock favicon %}
     {% block basecss %}
       <link rel="stylesheet"
@@ -47,8 +47,10 @@
             href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css"
             crossorigin="anonymous"
             referrerpolicy="no-referrer">
-      <link href="{% static "vendor/select2/select2-bootstrap-5-theme.css" %}" rel="stylesheet">
-      <link href="{% static "vendor/select2/select2-bootstrap-5-theme.css" %}" rel="stylesheet">
+      <link href="{% static "vendor/select2/select2-bootstrap-5-theme.css" %}"
+            rel="stylesheet">
+      <link href="{% static "vendor/select2/select2-bootstrap-5-theme.css" %}"
+            rel="stylesheet">
       <link href="{% static "css/classy_admin.css" %}" rel="stylesheet">
     {% endblock basecss %}
     {% block extrahead %}
@@ -98,11 +100,11 @@
       <script src="{% static 'js/jquery-formset.js' %}"></script>
     {% endblock basescripts %}
     {% block modal %}
-      {% include "classy_admin/modal/_dialog.html" %}
-      {% include "classy_admin/modal/_script.html" %}
+      {% include "modal/_dialog.html" %}
+      {% include "modal/_script.html" %}
     {% endblock modal %}
     {% block messages %}
-      {% include "classy_admin/includes/messages.html" %}
+      {% include "includes/messages.html" %}
     {% endblock messages %}
     {% block extrascript %}
     {% endblock extrascript %}

@@ -5,8 +5,7 @@ from django.views.generic import DetailView as DjangoDetailView
 from django.views.generic.detail import SingleObjectMixin
 from django_tables2.utils import Accessor
 
-from .aaa import LoginRequiredMixin, PermissionRequiredMixin
-from .mixins import TemplateMixin
+from .mixins import ViewSetMixin
 
 
 class DetailMixin(SingleObjectMixin):
@@ -25,7 +24,7 @@ class DetailMixin(SingleObjectMixin):
             field: Field = accessor.get_field(type(obj))
             if field:
                 # target attribute is a field
-                f_label = field.verbose_name.capitalize()
+                f_label = field.verbose_name[0].upper() + field.verbose_name[1:]
                 f_type = field.get_internal_type()
                 # if has choices get choice label for value
                 if field.choices:
@@ -66,20 +65,14 @@ class DetailMixin(SingleObjectMixin):
         return context
 
 
-class DetailView(
-    DetailMixin,
-    LoginRequiredMixin,
-    PermissionRequiredMixin,
-    TemplateMixin,
-    DjangoDetailView,
-):
+class DetailView(ViewSetMixin, DetailMixin, DjangoDetailView):
     template_name_suffix = "_detail"
 
     def get(self, request, *args, **kwargs):
         self.detail_object = self.get_object()
         return super().get(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["page_title"] = f"{self.model._meta.verbose_name}"
-        return context
+    def get_breadcrumbs(self):
+        breadcrumbs = super().get_breadcrumbs()
+        breadcrumbs[-1].title += f"de {self}"
+        return breadcrumbs

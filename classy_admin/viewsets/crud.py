@@ -5,7 +5,7 @@ from ..views.detail import DetailView
 from ..views.edit import CreateView, DeleteView, UpdateView
 from ..views.list import TableListView
 from .actions import Action
-from .base import ViewSet, view_with_action
+from .base import ViewSet
 from .mixins import WithActionMixin
 
 
@@ -73,10 +73,10 @@ class CrudDetailView(DetailView):
 
 
 class CrudViewSet(ViewSet):
-    list_display = None
-    fields = None
-    detail_fields = None
-    exclude = None
+    list_display: list[str] = None
+    fields: list[str] = None
+    detail_fields: list[str] = None
+    exclude: list[str] = None
     form_class = None
     filterset_class = None
     filterset_fields = None
@@ -84,8 +84,8 @@ class CrudViewSet(ViewSet):
     available_actions: dict[str, Action] = dict(
         list=Action(view_class=CrudListView),
         add=Action(view_class=CrudCreateView),
-        change=Action(view_class=CrudUpdateView, default=True),
-        detail=Action(view_class=CrudDetailView, default=False),
+        change=Action(view_class=CrudUpdateView),
+        detail=Action(view_class=CrudDetailView),
         delete=Action(view_class=CrudDeleteView),
     )
 
@@ -98,13 +98,10 @@ class CrudViewSet(ViewSet):
     ):
         super().__init__(model, name, register, **kwargs)
         available_actions = self.get_available_actions()
-        for name in available_actions.keys():
-            action = available_actions.get(name)
+        for name, action in available_actions.items():
             kwargs = {attr: val for attr, val in action.__dict__.items()}
-            view_class = view_with_action(kwargs.get("view_class"))
-            kwargs.update({"viewset": self, "view_class": view_class})
-            self._update_action_kwargs(name, kwargs)
-            self._actions[name] = Action(name=name, **kwargs)
+            view_class = kwargs.pop("view_class")
+            self.action(name, **kwargs)(view_class)
 
     def get_available_actions(self) -> dict[str, Action]:
         return self.available_actions

@@ -1,4 +1,4 @@
-{% extends "classy_admin/modal.html" %}
+{% extends "modal.html" %}
 {% load crispy_forms_tags i18n %}
 {% block content %}
   <div class="modal-dialog modal-dialog-centered {% block modal_classes %} modal-lg {% endblock modal_classes %}">
@@ -29,7 +29,7 @@
           <div class="modal-footer">
             <div class="d-flex justify-content-end">
               {% block form_buttons %}
-                {% include "classy_admin/editing/_form_buttons.html" %}
+                {% include "editing/_form_buttons.html" %}
               {% endblock form_buttons %}
             </div>
           </div>
